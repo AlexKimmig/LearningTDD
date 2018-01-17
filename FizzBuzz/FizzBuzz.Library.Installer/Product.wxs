@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define FizzBuzz_TargetDir=$(var.FizzBuzz.TargetDir)?><?define FizzBuzz.Library_TargetDir=$(var.FizzBuzz.Library.TargetDir)?>
+	<Product Id="*" Name="FizzBuzz.Library.Installer" Language="1033" Version="1.0.0.0" Manufacturer="Alexander Kimmig" UpgradeCode="d1e8a619-bee4-422c-a781-5afc28090ac5">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab='no'/> <!--Hier kann man auch einstellen welche Dateien wo / bzw auf versch. Platten abgelegt werden sollen-->
+
+		<Feature Id="ProductFeature" Title="FizzBuzz.Library.Installer" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+    
+    <!--
+    WixUI_Advanced
+    WixUI_FeatureTree
+    WixUI_InstallDir
+    WixUI_Minimal
+    WixUI_Mondo
+    -->
+    <UIRef Id="WixUI_InstallDir"/>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="FizzBuzz.Library.Installer" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!--Dateien, welche vom dem Installer installiert werden-->
+			<Component Id="FizzBuzz.exe" Guid="ad326982-8c72-4614-b366-29daf5731a80">
+			  <File Id="FizzBuzz.exe" Name="FizzBuzz.exe" KeyPath="yes" Source="$(var.FizzBuzz_TargetDir)FizzBuzz.exe" />
+			</Component>
+			<Component Id="FizzBuzz.exe.config" Guid="d89dd568-4b65-4478-9a48-f8c12454c7b5">
+			  <File Id="FizzBuzz.exe.config" Name="FizzBuzz.exe.config" KeyPath="yes" Source="$(var.FizzBuzz_TargetDir)FizzBuzz.exe.config" />
+			</Component>
+			<Component Id="FizzBuzz.Library.dll" Guid="1e24f177-94ab-484c-bc16-c1ad20a300cf">
+			  <File Id="FizzBuzz.Library.dll" Name="FizzBuzz.Library.dll" KeyPath="yes" Source="$(var.FizzBuzz.Library_TargetDir)FizzBuzz.Library.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

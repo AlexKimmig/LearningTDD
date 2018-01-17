@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define FizzBuzz_TargetDir=$(var.FizzBuzz.TargetDir)?><?define FizzBuzz.Library_TargetDir=$(var.FizzBuzz.Library.TargetDir)?>
+	<Product Id="*" Name="FizzBuzz.Installer" Language="1033" Version="1.0.0.0" Manufacturer="Alexander Kimmig" UpgradeCode="62f41d6a-4afb-45b3-aec0-44f7ca9e9a70">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="no"/>
+
+		<Feature Id="ProductFeature" Title="FizzBuzz.Installer" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+    <UIRef Id="WixUI_Minimal"/>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="FizzBuzz.Installer" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+			<Component Id="FizzBuzz.exe" Guid="ba736ea7-ca79-401e-ad93-523e19841da2">
+			  <File Id="FizzBuzz.exe" Name="FizzBuzz.exe" Source="$(var.FizzBuzz_TargetDir)FizzBuzz.exe" />
+			</Component>
+			<Component Id="FizzBuzz.exe.config" Guid="6f2ce0ce-f4fb-4490-be8d-8199f152c29e">
+			  <File Id="FizzBuzz.exe.config" Name="FizzBuzz.exe.config" Source="$(var.FizzBuzz_TargetDir)FizzBuzz.exe.config" />
+			</Component>
+			<Component Id="FizzBuzz.Library.dll" Guid="ef790841-fcbb-4457-8787-29cc0e303521">
+			  <File Id="FizzBuzz.Library.dll" Name="FizzBuzz.Library.dll" Source="$(var.FizzBuzz.Library_TargetDir)FizzBuzz.Library.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
