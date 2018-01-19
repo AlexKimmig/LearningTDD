@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define FizzBuzz_TargetDir=$(var.FizzBuzz.TargetDir)?><?define FizzBuzz.Library_TargetDir=$(var.FizzBuzz.Library.TargetDir)?>
-	<Product Id="*" Name="FizzBuzz.Installer" Language="1033" Version="1.0.0.0" Manufacturer="Alexander Kimmig" UpgradeCode="62f41d6a-4afb-45b3-aec0-44f7ca9e9a70">
+	<Product Id="*" Name="FizzBuzz" Language="1033" Version="1.0.0.0" Manufacturer="Alexander Kimmig" UpgradeCode="2ba3c4b2-88f2-4de1-a2a1-4696a4c877ae">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -8,31 +8,72 @@
 
 		<Feature Id="ProductFeature" Title="FizzBuzz.Installer" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
+      
+      <!-- Instruction for Wix to intall the Shortcut-->
+      <ComponentRef Id="ApplicationShortcut" />
 		</Feature>
     <UIRef Id="WixUI_Minimal"/>
+  
+    <!-- Custom Action Test-->
+    
+    <!-- Adding Path to CustomAction.dll-->
+    <Binary Id="CustomActionKey.CA.dll"
+            src="..\CustomAction\bin\$(var.Configuration)\CustomAction.CA.dll"/>
+  
+    <!-- Creating CA Element-->
+    <CustomAction Id="CustomAction1"
+                   Return="check"
+                  Execute="immediate"
+                  BinaryKey="CustomActionKey.CA.dll"
+                  DllEntry="CustomActionMethod" />
+    
+    <!-- Creating Installation Instructions-->
+    <InstallExecuteSequence>
+      <Custom Action="CustomAction1" Before="InstallFinalize" />
+    </InstallExecuteSequence>
 	</Product>
-
+    
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="FizzBuzz.Installer" />
+        <!--Installfolder for application files-->
+				<Directory Id="INSTALLFOLDER" Name="FizzBuzz" />
+        
+        <!-- Folder for menu shortcuts-->
+        <Directory Id="ProgramMenuFolder">
+          <Directory Id="ApplicationProgramsFolder" Name="My Application Name"/>
+        </Directory>
 			</Directory>
 		</Directory>
 	</Fragment>
 
+  <!-- Add the shortcut to the installer package -->
+  <Fragment>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="cf12a910-8e25-4143-a288-44fa9dbba169">
+        <Shortcut Id="ApplicationStartMenuShortcut" 
+          Name="FizzBuzz" 
+          Description="Just a small FizzBuzz"
+          Target="[#FizzBuzz.exe]"
+          WorkingDirectory="INSTALLFOLDER"/>
+          <!-- 
+          <Icon>              
+          -->
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\MyApplicationName" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+    
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-			<!-- <Component Id="ProductComponent"> -->
-				<!-- TODO: Insert files, registry keys, and other resources here. -->
-			<!-- </Component> -->
-			<Component Id="FizzBuzz.exe" Guid="ba736ea7-ca79-401e-ad93-523e19841da2">
+			<Component Id="FizzBuzz.exe" Guid="accc8a5f-35fb-4435-bf78-3e5c7063a775">
 			  <File Id="FizzBuzz.exe" Name="FizzBuzz.exe" Source="$(var.FizzBuzz_TargetDir)FizzBuzz.exe" />
 			</Component>
-			<Component Id="FizzBuzz.exe.config" Guid="6f2ce0ce-f4fb-4490-be8d-8199f152c29e">
+			<Component Id="FizzBuzz.exe.config" Guid="bec2eb1f-82ef-44eb-9877-eb311f1e505f">
 			  <File Id="FizzBuzz.exe.config" Name="FizzBuzz.exe.config" Source="$(var.FizzBuzz_TargetDir)FizzBuzz.exe.config" />
 			</Component>
-			<Component Id="FizzBuzz.Library.dll" Guid="ef790841-fcbb-4457-8787-29cc0e303521">
+			<Component Id="FizzBuzz.Library.dll" Guid="286903b3-4cc0-4d5f-87ac-b6d5efc269cd">
 			  <File Id="FizzBuzz.Library.dll" Name="FizzBuzz.Library.dll" Source="$(var.FizzBuzz.Library_TargetDir)FizzBuzz.Library.dll" />
 			</Component>
 		</ComponentGroup>
